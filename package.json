@@ -1,12 +1,15 @@
 {
-	"name": "gulp4-test",
+	"name": "gulp4config",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "My Gulp 4 new config",
+	"main": "index.html",
 	"scripts": {
-		"start": "gulp"
+		"start": "gulp",
+		"build": "gulp build",
+		"prod": "echo \"Error: TODO soon\" && exit 1"
+		
 	},
-	"author": "",
+	"author": "OstKost",
 	"license": "ISC",
 	"devDependencies": {
 		"@babel/core": "^7.1.2",
