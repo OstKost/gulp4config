@@ -1,7 +1,6 @@
 // *****
-// OstKost Gulp 4 config 25.10.2018
+// OstKost Gulp 4 config 11.11.2018
 // *****
-
 import gulp from 'gulp'
 import browserSync from 'browser-sync'
 import del from 'del'
@@ -17,7 +16,8 @@ import mozjpeg from 'imagemin-mozjpeg'
 import pngquant from 'imagemin-pngquant'
 
 // Clean folders
-const clean = () => del(['dist/css/*', 'dist/js/*'])
+const clean = () => del(['dist/css/*', 'dist/js/*', 'dist/*.html'])
+const cleanSrc = () => del(['src/assets/css/*', 'src/assets/js/*'])
 const cleanImages = () => del(['dist/images/*'])
 
 // Copy html
@@ -43,12 +43,11 @@ function html() {
 			.pipe(browserSync.stream())
 	)
 }
-
 // Compile SCSS into CSS & auto-inject into browsers
 function styles() {
 	return (
 		gulp
-			.src('src/scss/*.scss')
+			.src('src/scss/main.scss')
 			.pipe(sass())
 			.pipe(
 				autoprefixer({
@@ -73,7 +72,6 @@ function styles() {
 			.pipe(browserSync.stream())
 	)
 }
-
 // Compile JS & auto-inject into browsers
 function scripts() {
 	return (
@@ -90,7 +88,6 @@ function scripts() {
 			.pipe(browserSync.stream())
 	)
 }
-
 // Optimize Images
 function images() {
 	return (
@@ -113,14 +110,23 @@ function images() {
 			.pipe(gulp.dest('dist/images/'))
 	)
 }
-
 // Static Server + watching scss/scripts/html files
+function serveSrc() {
+	browserSync({
+		server: 'src'
+	})
+
+	gulp.watch('src/scss/**/*.scss', gulp.series(styles))
+	gulp.watch('src/js/**/*.js', gulp.series(scripts))
+	gulp.watch('src/*.html').on('change', browserSync.reload)
+}
+
 function serve() {
 	browserSync({
 		server: 'dist'
 	})
 
-	gulp.watch('src/scss/main.scss', gulp.series(styles))
+	gulp.watch('src/scss/**/*.scss', gulp.series(styles))
 	gulp.watch('src/js/**/*.js', gulp.series(scripts))
 	gulp.watch('src/index.html', gulp.series(html))
 	gulp.watch('dist/index.html').on('change', browserSync.reload)
@@ -128,11 +134,11 @@ function serve() {
 
 const build = gulp.parallel(images, html, styles, scripts)
 
-gulp.task('default', gulp.series(clean, build, serve))
-
 module.exports = {
 	clean,
 	cleanImages,
 	build,
 	serve
 }
+
+gulp.task('default', gulp.series(clean, build, serve))
